@@ -1,6 +1,24 @@
-import LinkText from "./LinkText";
+import { useState } from "react";
+import OTPInput from "react-otp-input";
+import { useNavigate } from "react-router-dom";
 
 const ForgotOTP = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [otp, setOtp] = useState("");
+
+  const handleRegister = () => {
+    if (email.length >= 2 && otp.length >= 2) {
+      setLoading(true);
+      console.log("true");
+      setTimeout(() => {
+        navigate("/");
+        setLoading(false);
+      }, 5000);
+    }
+  };
+
   return (
     <div className="flex h-screen w-auto">
       <div className="hidden lg:flex items-center justify-center flex-1 bg-white text-black">
@@ -222,34 +240,43 @@ const ForgotOTP = () => {
       {/* right */}
       <div className="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center">
         <div className="max-w-md w-full p-6">
-          <h1 className="text-3xl font-semibold mb-6 text-black text-center">Forgot Password</h1>
+          <h1 className="text-3xl font-semibold mb-6 text-black text-center">Set New Password</h1>
 
           <div className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-left text-sm font-medium text-gray-700">
-                Email
+                Password
               </label>
               <input
                 type="text"
                 id="email"
                 name="email"
+                onChange={(e) => setEmail(e.target.value)}
                 className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
               />
             </div>
-
-            <div>
-              <button
-                type="submit"
-                className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
-              >
-                Reset Password
-              </button>
-            </div>
           </div>
-          <div className="mt-4 text-sm text-gray-600 text-center">
-            <p>
-              have an account? <LinkText path="/" title="Login here" className="text-black hover:underline" />
-            </p>
+
+          <div className="space-y-4 py-4">
+            <label htmlFor="username" className="block text-left text-sm font-medium text-gray-700">
+              OTP
+            </label>
+            <OTPInput
+              value={otp}
+              onChange={setOtp}
+              numInputs={6}
+              renderSeparator={<span>-</span>}
+              renderInput={(props) => <input {...props} />}
+              inputStyle={{ height: 60, width: 60, fontSize: 24 }}
+            />
+
+            <button
+              onClick={() => handleRegister()}
+              type="submit"
+              className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
+            >
+              {loading ? "Confirming..." : "Confirm"}
+            </button>
           </div>
         </div>
       </div>

@@ -10,11 +10,13 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
 
   const handleClick = () => {
-    setLoading(true);
-    setTimeout(() => {
-      navigate("dashboard");
-      setLoading(false);
-    }, 4000);
+    if (email.length >= 3 && password.length >= 4) {
+      setLoading(true);
+      setTimeout(() => {
+        navigate("dashboard");
+        setLoading(false);
+      }, 4000);
+    }
     console.log(email, password, "user details");
     return "hello";
   };
@@ -280,7 +282,7 @@ const LoginForm = () => {
                 onClick={handleClick}
                 className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
               >
-                {loading ? "...Loading" : "Sign In"}
+                {loading ? "Signin..." : "Sign In"}
               </button>
             </div>
           </div>

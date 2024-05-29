@@ -13,12 +13,15 @@ const Register = () => {
   const [password, setPassword] = useState("");
 
   const handleRegister = () => {
-    setLoading(true);
-    setTimeout(() => {
-      navigate("/dashboard");
-      setLoading(false);
-      console.log(firstName, lastName, phoneNumber, email, password, "new account detail");
-    }, 5000);
+    if (firstName.length >= 3 && lastName.length >= 3 && email.length >= 3 && password.length > 3) {
+      setLoading(true);
+      // setLoading(false);
+      setTimeout(() => {
+        navigate("/dashboard");
+        setLoading(false);
+        console.log(firstName, lastName, phoneNumber, email, password, "new account detail");
+      }, 5000);
+    }
   };
 
   return (
@@ -311,7 +314,7 @@ const Register = () => {
                 onClick={handleRegister}
                 className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
               >
-                {loading ? "Signing up user" : "Sign up"}
+                {loading ? "Signing up user...." : "Sign up"}
               </button>
             </div>
           </div>

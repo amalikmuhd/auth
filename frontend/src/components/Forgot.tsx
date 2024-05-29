@@ -1,6 +1,22 @@
+import { useState } from "react";
 import LinkText from "./LinkText";
+import { useNavigate } from "react-router-dom";
 
 const Forgot = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+
+  const handleClick = () => {
+    if (email.length >= 6) {
+      setLoading(true);
+      setTimeout(() => {
+        navigate("/forgot-otp");
+        setLoading(false);
+      }, 4000);
+    }
+    return "hello";
+  };
   return (
     <div className="flex h-screen w-auto">
       <div className="hidden lg:flex items-center justify-center flex-1 bg-white text-black">
@@ -233,16 +249,18 @@ const Forgot = () => {
                 type="text"
                 id="email"
                 name="email"
+                onChange={(e) => setEmail(e.target.value)}
                 className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
               />
             </div>
 
             <div>
               <button
+                onClick={handleClick}
                 type="submit"
                 className="w-full bg-black text-white p-2 rounded-md hover:bg-gray-800 focus:outline-none focus:bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-colors duration-300"
               >
-                Reset Password
+                {loading ? "Reset Password...." : "Reset Password"}
               </button>
             </div>
           </div>
