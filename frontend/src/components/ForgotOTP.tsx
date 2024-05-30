@@ -1,24 +1,45 @@
+import axios from "axios";
 import { useState } from "react";
 import OTPInput from "react-otp-input";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ForgotOTP = () => {
+  const { state } = useLocation();
+  const { email } = state;
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [otp, setOtp] = useState("");
 
-  const handleRegister = () => {
-    if (email.length >= 2 && otp.length >= 2) {
+  const BASE_URL = "http://localhost:3000/api/users/reset";
+
+  const handleRegister = async () => {
+    if (password.length >= 5 && otp.length >= 5) {
       setLoading(true);
-      console.log("true");
-      setTimeout(() => {
-        navigate("/");
-        setLoading(false);
-      }, 5000);
+      setError("");
+      const payload = {
+        email,
+        password,
+        otp,
+      };
+      console.log(payload, "payload");
+      try {
+        const response = await axios.post(BASE_URL, payload);
+        console.log(response.data, "datadae");
+        if (response.data.message === "success") {
+          navigate("/");
+        }
+      } catch (error) {
+        console.log(error?.response?.data?.message, "error");
+        setError(error?.response?.data?.message);
+      }
+
+      setLoading(false);
     }
   };
 
+  console.log(email, "email");
   return (
     <div className="flex h-screen w-auto">
       <div className="hidden lg:flex items-center justify-center flex-1 bg-white text-black">
@@ -241,7 +262,7 @@ const ForgotOTP = () => {
       <div className="w-full bg-gray-100 lg:w-1/2 flex items-center justify-center">
         <div className="max-w-md w-full p-6">
           <h1 className="text-3xl font-semibold mb-6 text-black text-center">Set New Password</h1>
-
+          {error && <p className="text-red-700">{error}</p>}
           <div className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-left text-sm font-medium text-gray-700">
@@ -251,7 +272,7 @@ const ForgotOTP = () => {
                 type="text"
                 id="email"
                 name="email"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
                 className="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
               />
             </div>

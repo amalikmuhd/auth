@@ -3,15 +3,14 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 const { JWT_PRIVATE_KEY } = process.env;
-
 const userSchema = new mongoose.Schema(
   {
-    first_name: {
+    firstName: {
       type: String,
       minlength: 4,
       maxlength: 100,
     },
-    last_name: {
+    lastName: {
       type: String,
       minlength: 4,
       maxlength: 100,
@@ -22,7 +21,7 @@ const userSchema = new mongoose.Schema(
       minlength: 5,
       maxlength: 255,
     },
-    phone_number: {
+    phoneNumber: {
       type: String,
       minlength: 4,
       maxlength: 100,
@@ -47,10 +46,10 @@ const User = mongoose.model("User", userSchema);
 
 function validateUser(user) {
   const schema = {
-    first_name: Joi.string().min(5).max(255),
-    last_name: Joi.string().min(5).max(255),
+    firstName: Joi.string().min(3).max(255),
+    lastName: Joi.string().min(3).max(255),
     email: Joi.string().min(5).max(255).required().email(),
-    phone_number: Joi.string(),
+    phoneNumber: Joi.string(),
     password: Joi.string().min(5).max(255),
   };
   return Joi.validate(user, schema);

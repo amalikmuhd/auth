@@ -1,6 +1,7 @@
 import { useState } from "react";
 import LinkText from "./LinkText";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -12,15 +13,35 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [error, setError] = useState("");
+
+  const BASE_URL = "http://localhost:3000/api/users/signup";
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError("");
+    const payload = {
+      firstName,
+      lastName,
+      phoneNumber,
+      email,
+      password,
+    };
+    try {
+      const response = await axios.post(BASE_URL, payload);
+      if (response.data.data === "User created") {
+        navigate("/");
+      }
+    } catch (error) {
+      console.log(error?.response?.data?.message);
+      setError(error?.response?.data?.message);
+    }
+    setLoading(false);
+  };
+
   const handleRegister = () => {
     if (firstName.length >= 3 && lastName.length >= 3 && email.length >= 3 && password.length > 3) {
-      setLoading(true);
-      // setLoading(false);
-      setTimeout(() => {
-        navigate("/dashboard");
-        setLoading(false);
-        console.log(firstName, lastName, phoneNumber, email, password, "new account detail");
-      }, 5000);
+      fetchData();
     }
   };
 
@@ -247,6 +268,7 @@ const Register = () => {
         <div className="max-w-md w-full p-6">
           <h1 className="text-3xl font-semibold mb-6 text-black text-center">Register </h1>
 
+          {error && <p className="text-red-700">{error}</p>}
           <div className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-left text-sm font-medium text-gray-700">

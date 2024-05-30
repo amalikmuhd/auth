@@ -1,17 +1,30 @@
 import { useState } from "react";
 import LinkText from "./LinkText";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Forgot = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
 
-  const handleClick = () => {
+  const BASE_URL = "http://localhost:3000/api/users/forgot-password";
+
+  const handleClick = async () => {
     if (email.length >= 6) {
       setLoading(true);
+      setError("");
+      try {
+        const response = await axios.post(BASE_URL, { email });
+        if (response.data.message === "success") {
+          navigate("/forgot-otp", { state: { email } });
+        }
+      } catch (error) {
+        console.log(error, "error");
+        setError;
+      }
       setTimeout(() => {
-        navigate("/forgot-otp");
         setLoading(false);
       }, 4000);
     }
@@ -240,6 +253,7 @@ const Forgot = () => {
         <div className="max-w-md w-full p-6">
           <h1 className="text-3xl font-semibold mb-6 text-black text-center">Forgot Password</h1>
 
+          {error && <p className="text-red-700">{error}</p>}
           <div className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-left text-sm font-medium text-gray-700">

@@ -22,13 +22,13 @@ router.post("/signup", async (req, res) => {
     let user = await User.findOne({ email: req.body.email });
     if (user) return res.status(400).send({ message: "User already registered." });
 
-    user = new User(_.pick(req.body, ["first_name", "last_name", "email", "phone_number", "password"]));
+    user = new User(_.pick(req.body, ["firstName", "lastName", "email", "phoneNumber", "password"]));
 
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     await user.save();
 
-    sendMail(user.email, user.first_name);
+    sendMail(user.email, user.firstName);
 
     return res.send({ message: "success", data: "User created" });
   } catch (error) {
@@ -39,10 +39,9 @@ router.post("/signup", async (req, res) => {
 router.post("/forgot-password", async (req, res) => {
   let user = await User.findOne({ email: req.body.email });
 
-  console.log(user, "hre");
   if (!user) return res.status(400).send({ message: "User does not exists." });
 
-  user = new User(_.pick(req.body, ["email", "name"]));
+  user = new User(_.pick(req.body, ["email", "lastName"]));
 
   if (req.body.password) {
     const validPassword = await bcrypt.compare(req.body.password, user.password);
@@ -57,8 +56,8 @@ router.post("/forgot-password", async (req, res) => {
   await sendMail(
     user.email,
     null,
-    "Jega Abubakar OTP",
-    `<head><style>body {font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 0 20px;}.container {max-width: 600px;background-color: #fff;padding: 20px;border-radius: 8px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);}h2 {color: #333;}p {color: #555;}.otp-code {font-size: 24px;color: #007bff;margin-bottom: 5px;}.footer {text-align: center;margin-top: 10px;color: #888;}</style></head><body><div class='container'><h2>Password Reset</h2><p>Dear ${user.name},</p><p>We have received a request to change your password. Please use the following OTP code for verification:</p>
+    "Jega Forgot Password OTP",
+    `<head><style>body {font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 0 20px;}.container {max-width: 600px;background-color: #fff;padding: 20px;border-radius: 8px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);}h2 {color: #333;}p {color: #555;}.otp-code {font-size: 24px;color: #007bff;margin-bottom: 5px;}.footer {text-align: center;margin-top: 10px;color: #888;}</style></head><body><div class='container'><h2>Password Reset</h2><p>Dear ${user.lastName},</p><p>We have received a request to change your password. Please use the following OTP code for verification:</p>
           <div class='otp-code'>${generatedOTP}</div>
           <p>If you did not make this request, you can safely ignore this email.</p>
           <p>Thank you!</p>
@@ -111,15 +110,15 @@ router.post("/reset", async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassed = await bcrypt.hash(password, salt);
 
-    if (password.length < 8) return res.status(400).send({ message: "Passowrd is too short!" });
+    if (password.length < 6) return res.status(400).send({ message: "Password is too short!" });
 
     await User.updateOne({ email }, { password: hashedPassed });
 
     await sendMail(
       user.email,
       null,
-      "Jega OTP",
-      `<head><style>body {font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 0 20px;}.container {max-width: 600px;background-color: #fff;padding: 20px;border-radius: 8px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);}h2 {color: #333;}p {color: #555;}.otp-code {font-size: 24px;color: #007bff;margin-bottom: 5px;}.footer {text-align: center;margin-top: 10px;color: #888;}</style></head><body><div class='container'><h2>Password Changed</h2><p>Dear ${user.name},</p><p>Your has been changed password successfully.</p>
+      "Jega Password Reset",
+      `<head><style>body {font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 0 20px;}.container {max-width: 600px;background-color: #fff;padding: 20px;border-radius: 8px;box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);}h2 {color: #333;}p {color: #555;}.otp-code {font-size: 24px;color: #007bff;margin-bottom: 5px;}.footer {text-align: center;margin-top: 10px;color: #888;}</style></head><body><div class='container'><h2>Password Changed</h2><p>Dear ${user.lastName},</p><p>Your Password has been changed successfully.</p>
             <p>If you did not make this request, you can safely ignore this email.</p>
             <p>Thank you!</p>
             <div class="footer">

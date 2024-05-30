@@ -10,10 +10,10 @@ module.exports = function (req, res, next) {
   const apiKey = req.header("x-api-key");
   if (!apiKey) return res.status(401).send({ message: "Access Denied. No API Key provided." });
 
-  // try {
-  //   req.user = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
-  //   next();
-  // } catch (ex) {
-  //   res.status(400).send({ message: 'Invalid token.' });
-  // }
+  try {
+    req.user = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+    next();
+  } catch (ex) {
+    res.status(400).send({ message: "Invalid token." });
+  }
 };

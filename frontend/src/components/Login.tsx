@@ -2,23 +2,42 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import LinkText from "./LinkText";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const BASE_URL = "http://localhost:3000/api/auth/login";
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError("");
+    const payload = {
+      email,
+      password,
+    };
+    try {
+      const response = await axios.post(BASE_URL, payload);
+      console.log(response.data.data, "checking");
+      if (response.data?.message === "success") {
+        localStorage.setItem("token", JSON.stringify(response.data.data));
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      console.log(error?.response?.data?.message, "error");
+      setError(error?.response?.data?.message);
+    }
+    setLoading(false);
+  };
 
   const handleClick = () => {
     if (email.length >= 3 && password.length >= 4) {
-      setLoading(true);
-      setTimeout(() => {
-        navigate("dashboard");
-        setLoading(false);
-      }, 4000);
+      fetchData();
     }
-    console.log(email, password, "user details");
-    return "hello";
   };
 
   return (
@@ -245,6 +264,7 @@ const LoginForm = () => {
           <h1 className="text-3xl font-semibold mb-6 text-black text-center">Sign In</h1>
 
           <div className="space-y-4">
+            {error && <p className="text-red-700">{error}</p>}
             <div>
               <label htmlFor="username" className="block text-left text-sm font-medium text-gray-700">
                 Email
